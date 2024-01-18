@@ -1,33 +1,69 @@
 'use strict';
-const messageElement = document.querySelector('.message');
-const scoreElement = document.querySelector('.score');
-const secretNumber = Math.trunc(Math.random() * 20) + 1;
-let stateScore = 20;
-document.querySelector('.number').textContent = secretNumber;
+// ===== Elements =================================================
+const elementBody = document.querySelector('body');
+const elementMessage = document.querySelector('.message');
+const elementScore = document.querySelector('.score');
+const elementCheck = document.querySelector('.check');
+const elementAgain = document.querySelector('.again');
+const elementNumber = document.querySelector('.number');
+const elementGuess = document.querySelector('.guess');
+const elementHighscore = document.querySelector('.highscore');
 
-document.querySelector('.check').addEventListener('click', function () {
-  const guess = Number(document.querySelector('.guess').value);
-  if (!guess) {
-    messageElement.textContent = '⛔ No Number Was Given!';
-  } else if (guess === secretNumber) {
-    messageElement.textContent = '🎉 Correct Number!';
-  } else if (guess > secretNumber) {
-    if (stateScore > 1) {
-      messageElement.textContent = '📈 Too High!';
-      stateScore--;
-      scoreElement.textContent = stateScore;
-    } else {
-      messageElement.textContent = '💥 You Lost the Game!';
-      scoreElement.textContent = 0;
+// ===== Environment ==============================================
+const numberOfTries = 20;
+let numberSecret = Math.trunc(Math.random() * numberOfTries) + 1;
+let stateScore = numberOfTries;
+let stateHighscore = 0; //
+
+// ===== Logic ====================================================
+// ===== Again
+elementAgain.addEventListener('click', function () {
+  numberSecret = Math.trunc(Math.random() * numberOfTries) + 1; //
+  elementMessage.textContent = 'Start guessing...'; //
+  elementBody.style.backgroundColor = '#222'; //
+  elementNumber.style.width = '15rem'; //
+  elementNumber.textContent = '?'; //
+  stateScore = numberOfTries; //
+  elementScore.textContent = stateScore; //
+  elementGuess.value = ''; //
+});
+
+// ===== Check
+elementCheck.addEventListener('click', function () {
+  const numberGuess = Number(elementGuess.value);
+  if (!numberGuess) {
+    elementMessage.textContent = '⛔ No Number Was Given!';
+  } else if (numberGuess === numberSecret) {
+    // numberGuess is Correct
+    elementMessage.textContent = '🎉 Correct Number!';
+    elementBody.style.backgroundColor = '#69b347';
+    elementNumber.style.width = '30rem';
+    elementNumber.textContent = numberSecret;
+
+    if (stateScore > stateHighscore) {
+      stateHighscore = stateScore;
+      elementHighscore.textContent = stateHighscore;
     }
-  } else if (guess < secretNumber) {
+    // numberGuess too High
+  } else if (numberGuess > numberSecret) {
     if (stateScore > 1) {
-      messageElement.textContent = '📉 Too Low!';
+      elementMessage.textContent = '📈 Too High!';
       stateScore--;
-      scoreElement.textContent = stateScore;
+      elementScore.textContent = stateScore;
     } else {
-      messageElement.textContent = '💥 You Lost the Game!';
-      scoreElement.textContent = 0;
+      elementMessage.textContent = '💥 You Lost the Game!';
+      elementScore.textContent = 0;
+    }
+    // numberGuess too Low
+  } else if (numberGuess < numberSecret) {
+    if (stateScore > 1) {
+      elementMessage.textContent = '📉 Too Low!';
+      stateScore--;
+      elementScore.textContent = stateScore;
+    } else {
+      elementMessage.textContent = '💥 You Lost the Game!';
+      elementScore.textContent = 0;
     }
   }
 });
+// ================================================================
